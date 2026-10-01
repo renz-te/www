@@ -1,0 +1,1 @@
+</main><footer>ResolveEd • School Problem Resolution Effectiveness System</footer><script>function openLogoutModal(e){e.preventDefault();document.getElementById('logoutModal').classList.remove('hidden')}function closeLogoutModal(){document.getElementById('logoutModal').classList.add('hidden')}</script></body></html>

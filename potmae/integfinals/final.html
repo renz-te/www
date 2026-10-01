@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ResolveEd - Problem Resolution System</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#f5f7ff 0%,#eefbf9 100%);color:#172033}
+header{height:76px;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid #e7eaf2;display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:sticky;top:0;z-index:100;box-shadow:0 5px 25px #1720330b}
+.logo{font-size:28px;font-weight:900;letter-spacing:-1px;background:linear-gradient(90deg,#2563eb,#14b8a6);-webkit-background-clip:text;color:transparent}.logo span{color:#14b8a6}
+nav{display:flex;gap:7px;align-items:center}nav button{background:transparent;color:#475569;padding:10px 12px;border:0;border-radius:10px;font-weight:700}nav button:hover{background:#eff6ff;color:#2563eb}
+.container{max-width:1180px;margin:auto;padding:34px 20px}.hidden{display:none!important}
+.hero{background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 48%,#14b8a6 100%);color:white;padding:38px;border-radius:24px;box-shadow:0 18px 45px #2563eb28;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.hero h1{margin:0 0 8px}.hero p{margin:0}.btn,button{background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;border:0;border-radius:11px;padding:11px 17px;cursor:pointer;font-size:14px;font-weight:700;transition:.18s;box-shadow:0 5px 14px #2563eb20}.btn:hover,button:hover{transform:translateY(-1px);box-shadow:0 8px 18px #2563eb2a}.hero .btn{background:#fff;color:#2563eb}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:20px 0}.card{background:rgba(255,255,255,.92);border:1px solid #e8ebf3;border-radius:20px;padding:24px;box-shadow:0 12px 35px #1720330c}
+.stat{position:relative;overflow:hidden}.stat:before{content:"";position:absolute;left:0;top:0;width:5px;height:100%;background:linear-gradient(#2563eb,#14b8a6)}.stat strong{display:block;font-size:36px;color:#2563eb;margin-bottom:6px}.stat span{color:#64748b}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.steps div{background:#eef5ff;padding:18px;border-radius:12px}
+.auth{max-width:430px;margin:70px auto}.auth h1{text-align:center;margin-bottom:5px}.auth p{text-align:center;color:#64748b}
+form{display:flex;flex-direction:column;gap:9px}label{font-weight:700;margin-top:7px}input,textarea,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;background:white}
+.alert{padding:13px 16px;border-radius:10px;margin-bottom:18px}.success{background:#dcfce7;color:#166534}.error{background:#fee2e2;color:#991b1b}
+.toast{position:fixed;top:82px;right:24px;z-index:50;min-width:300px;max-width:420px;background:#fff;border:1px solid #bbf7d0;border-left:5px solid #16a34a;border-radius:12px;padding:16px 18px;box-shadow:0 12px 35px #0002;display:flex;align-items:flex-start;gap:12px}.toast-icon{width:28px;height:28px;border-radius:50%;background:#dcfce7;color:#16a34a;display:flex;align-items:center;justify-content:center;font-weight:800}.toast strong{display:block;margin-bottom:3px}.toast small{color:#64748b}.toast-close{margin-left:auto;background:transparent;color:#64748b;padding:2px 6px;font-size:18px}
+.demo{margin-top:15px;background:#f8fafc;padding:12px;border-radius:10px;font-size:13px}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.head h1{margin:0}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:separate;border-spacing:0}th,td{text-align:left;padding:14px;border-bottom:1px solid #edf0f5;white-space:nowrap}tbody tr:hover,table tr:hover td{background:#f8fbff}th{font-size:13px;color:#64748b}
+.badge{display:inline-block;padding:5px 9px;border-radius:20px;background:#eef2ff;font-size:12px}.priority-high,.priority-critical{background:#fee2e2;color:#991b1b}.priority-medium{background:#fef3c7;color:#92400e}.priority-low{background:#dcfce7;color:#166534}
+.details{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.details div{background:#f8fafc;padding:15px;border-radius:10px}
+.evidence{max-width:500px;width:100%;border-radius:12px;margin-top:15px}.two{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+footer{text-align:center;color:#64748b;padding:30px}
+.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px;z-index:30}.logout-modal-card{background:white;border-radius:16px;padding:28px;max-width:420px;width:100%;box-shadow:0 20px 60px #0005;text-align:center}.logout-modal-card h2{margin:0 0 8px}.logout-modal-card p{color:#64748b;margin:0 0 22px}.logout-actions{display:flex;justify-content:center;gap:10px}.cancel-btn{background:#e2e8f0;color:#334155}.confirm-btn{background:#dc2626}.modal-card{background:white;border-radius:16px;padding:25px;max-width:700px;width:100%;max-height:90vh;overflow:auto}
+.close{float:right;background:#e2e8f0;color:#334155}.delete-btn{background:#dc2626;color:#fff;padding:7px 10px;border-radius:7px;font-size:12px;margin-left:6px}.delete-btn:hover{background:#b91c1c}
+a{color:#2563eb;text-decoration:none}
+@media(max-width:800px){.grid,.steps,.details{grid-template-columns:1fr 1fr}.hero{display:block}.hero .btn{display:inline-block;margin-top:15px}nav{gap:3px}}
+@media(max-width:550px){.grid,.steps,.details,.two{grid-template-columns:1fr}nav{font-size:12px;overflow-x:auto;max-width:75vw}.profile-chip span{display:none}.notification-panel{right:-55px}.hero{padding:25px}}
+
+.notification-wrap{position:relative;margin-left:4px}
+.notification-btn{width:42px;height:42px;border-radius:50%;padding:0!important;display:flex;align-items:center;justify-content:center;background:#f1f5f9!important;color:#334155!important;box-shadow:none!important;font-size:19px}
+.notification-btn:hover{background:#e8f0ff!important;color:#2563eb!important}
+.notification-badge{position:absolute;right:-2px;top:-2px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#ef4444;color:white;font-size:10px;display:flex;align-items:center;justify-content:center;border:2px solid white;font-weight:800}
+.notification-panel{position:absolute;right:0;top:52px;width:370px;max-width:calc(100vw - 30px);background:white;border:1px solid #e5e7eb;border-radius:18px;box-shadow:0 20px 55px #0f172a25;overflow:hidden;display:none}
+.notification-panel.open{display:block}
+.notification-head{padding:16px 18px;border-bottom:1px solid #edf0f5;display:flex;align-items:center;justify-content:space-between}
+.notification-head h3{margin:0;font-size:18px}.notification-head button{background:transparent;color:#2563eb;box-shadow:none;padding:4px;font-size:12px}
+.notification-list{max-height:430px;overflow:auto}
+.notification-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid #f1f5f9;cursor:pointer;position:relative}
+.notification-item:hover{background:#f8fbff}
+.notification-item.unread{background:#eef6ff}
+.notification-item.unread:before{content:"";width:7px;height:7px;border-radius:50%;background:#2563eb;position:absolute;right:15px;top:19px}
+.notification-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 40px;background:#e0edff;font-size:18px}
+.notification-body{padding-right:15px}.notification-body strong{font-size:13px}.notification-body p{margin:3px 0;color:#334155;font-size:13px;line-height:1.4}.notification-body small{color:#94a3b8}
+.notification-empty{padding:35px 20px;text-align:center;color:#94a3b8}.notification-empty div{font-size:30px;margin-bottom:8px}
+.profile-chip{display:flex;align-items:center;gap:8px;margin-left:3px;padding:5px 9px;border-radius:12px;background:#f8fafc}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#14b8a6);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Resolve<span>Ed</span></div>
+  <nav id="nav"></nav>
+</header>
+
+<div id="app"></div>
+<div id="toast" class="toast hidden">
+  <div class="toast-icon">✓</div>
+  <div><strong id="toastTitle">Success</strong><small id="toastMessage"></small></div>
+  <button class="toast-close" onclick="hideToast()">×</button>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <button class="close" onclick="closeModal()">Close</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal hidden">
+  <div class="logout-modal-card">
+    <h2>Delete Report?</h2>
+    <p id="deleteMessage">Are you sure you want to delete this report? This action cannot be undone.</p>
+    <div class="logout-actions">
+      <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+      <button class="confirm-btn" onclick="confirmDelete()">Delete Report</button>
+    </div>
+  </div>
+</div>
+
+<div id="logoutModal" class="modal hidden">
+  <div class="logout-modal-card">
+    <h2>Log out?</h2>
+    <p>Are you sure you want to log out of your ResolveEd account?</p>
+    <div class="logout-actions">
+      <button class="cancel-btn" onclick="closeLogoutModal()">Cancel</button>
+      <button class="confirm-btn" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+</div>
+
+<footer>ResolveEd • School Problem Resolution Effectiveness System</footer>
+
+<script>
+const KEY="resolveed_demo_reports";
+const USER="resolveed_demo_user";
+const NOTIF_KEY="resolveed_demo_notifications";
+const STAFF_DIRECTORY = [
+  {name:"Juan Dela Cruz", username:"juan", role:"Maintenance Staff", locations:["Building A","Classrooms","Grounds / Hallway"]},
+  {name:"Pedro Santos", username:"pedro", role:"Maintenance Staff", locations:["Building B","Classrooms","Grounds / Hallway"]},
+  {name:"Mark Reyes", username:"mark", role:"IT Staff", locations:["Computer Laboratory","IT Office"]},
+  {name:"Maria Garcia", username:"maria", role:"Registrar Staff", locations:["Registrar"]},
+  {name:"Ana Cruz", username:"ana", role:"Librarian", locations:["Library"]},
+  {name:"Carlo Ramos", username:"carlo", role:"Food Service Staff", locations:["Cafeteria"]},
+  {name:"Nurse Staff", username:"nurse", role:"Clinic Staff", locations:["Clinic"]},
+];
+
+function staffDisplay(s){return `${s.name} — ${s.role}`;}
+function staffByName(name){return STAFF_DIRECTORY.find(s=>s.name===name);}
+function staffForLocation(location){
+  if(!location)return STAFF_DIRECTORY;
+  return STAFF_DIRECTORY.filter(s=>s.locations.some(l=>location.toLowerCase().includes(l.toLowerCase()) || l.toLowerCase().includes(location.toLowerCase())));
+}
+function ensureStaffAccounts(){
+  const users=JSON.parse(localStorage.getItem("resolveed_registered_users")||"[]");
+  STAFF_DIRECTORY.forEach(s=>{
+    if(!users.some(u=>u.username===s.username)){
+      users.push({name:s.name,username:s.username,password:"password",role:"staff",staffRole:s.role});
+    }
+  });
+  localStorage.setItem("resolveed_registered_users",JSON.stringify(users));
+}
+ensureStaffAccounts();
+
+
+function getNotifications(){
+  const all=JSON.parse(localStorage.getItem(NOTIF_KEY)||"{}");
+  return all[user?.username]||[];
+}
+function saveNotifications(list){
+  const all=JSON.parse(localStorage.getItem(NOTIF_KEY)||"{}");
+  if(user?.username){all[user.username]=list;localStorage.setItem(NOTIF_KEY,JSON.stringify(all));}
+}
+function addNotification(username, type, title, message, reportId){
+  if(!username)return;
+  const all=JSON.parse(localStorage.getItem(NOTIF_KEY)||"{}");
+  if(!all[username])all[username]=[];
+  all[username].unshift({
+    id:Date.now()+Math.random(),
+    type,title,message,reportId:reportId||null,
+    time:new Date().toISOString(),read:false
+  });
+  all[username]=all[username].slice(0,50);
+  localStorage.setItem(NOTIF_KEY,JSON.stringify(all));
+}
+function notificationIcon(type){
+  if(type==="new_report")return "📋";
+  if(type==="assigned")return "👤";
+  if(type==="updated")return "🔄";
+  if(type==="resolved")return "✅";
+  return "🔔";
+}
+function timeAgo(iso){
+  const sec=Math.floor((Date.now()-new Date(iso).getTime())/1000);
+  if(sec<60)return "Just now";
+  if(sec<3600)return Math.floor(sec/60)+"m ago";
+  if(sec<86400)return Math.floor(sec/3600)+"h ago";
+  if(sec<604800)return Math.floor(sec/86400)+"d ago";
+  return new Date(iso).toLocaleDateString();
+}
+function renderNotifications(){
+  if(!user)return;
+  const list=getNotifications();
+  const unread=list.filter(n=>!n.read).length;
+  const badge=unread>99?"99+":unread;
+  const navEl=document.getElementById("nav");
+  const existing=document.getElementById("notificationArea");
+  if(existing)existing.remove();
+  const wrap=document.createElement("div");
+  wrap.id="notificationArea";
+  wrap.className="notification-wrap";
+  wrap.innerHTML=`
+    <button class="notification-btn" onclick="toggleNotifications(event)" title="Notifications">
+      🔔${unread?`<span class="notification-badge">${badge}</span>`:""}
+    </button>
+    <div id="notificationPanel" class="notification-panel">
+      <div class="notification-head">
+        <h3>Notifications</h3>
+        <button onclick="markAllNotificationsRead(event)">Mark all as read</button>
+      </div>
+      <div class="notification-list">
+        ${list.length?list.map(n=>`
+          <div class="notification-item ${n.read?"":"unread"}" onclick="openNotification(${JSON.stringify(n.id)},event)">
+            <div class="notification-icon">${notificationIcon(n.type)}</div>
+            <div class="notification-body">
+              <strong>${esc(n.title)}</strong>
+              <p>${esc(n.message)}</p>
+              <small>${timeAgo(n.time)}</small>
+            </div>
+          </div>`).join(""):`<div class="notification-empty"><div>🔔</div><b>No notifications yet</b><br><small>New report and assignment updates will appear here.</small></div>`}
+      </div>
+    </div>`;
+  navEl.prepend(wrap);
+}
+function toggleNotifications(e){
+  e.stopPropagation();
+  const panel=document.getElementById("notificationPanel");
+  if(panel)panel.classList.toggle("open");
+}
+function markAllNotificationsRead(e){
+  if(e)e.stopPropagation();
+  const list=getNotifications().map(n=>({...n,read:true}));
+  saveNotifications(list);
+  renderNotifications();
+  const panel=document.getElementById("notificationPanel");
+  if(panel)panel.classList.add("open");
+}
+function openNotification(id,e){
+  if(e)e.stopPropagation();
+  const list=getNotifications();
+  const n=list.find(x=>String(x.id)===String(id));
+  if(!n)return;
+  n.read=true;saveNotifications(list);renderNotifications();
+  if(n.reportId)viewReport(n.reportId);
+}
+document.addEventListener("click",e=>{
+  const area=document.getElementById("notificationArea");
+  if(area && !area.contains(e.target)){
+    const panel=document.getElementById("notificationPanel");
+    if(panel)panel.classList.remove("open");
+  }
+});
+
+
+let reports=JSON.parse(localStorage.getItem(KEY)||"null")||[
+ {id:1,title:"Broken classroom electric fan",description:"The electric fan in Room 204 is not working properly.",category:"Facilities",priority:"high",location:"Building A - Room 204",status:"in_progress",reportedBy:"Demo Student",assignedTo:"School Staff",actionTaken:"Maintenance inspection scheduled.",date:"2026-09-20"},
+ {id:2,title:"Slow computer in laboratory",description:"One computer frequently freezes during class activities.",category:"IT",priority:"medium",location:"Computer Laboratory",status:"resolved",reportedBy:"Demo Student",assignedTo:"School Staff",actionTaken:"Computer was checked and software was updated.",date:"2026-09-18"}
+];
+
+let user=JSON.parse(localStorage.getItem(USER)||"null");
+
+function save(){localStorage.setItem(KEY,JSON.stringify(reports))}
+function setUser(x){user=x;localStorage.setItem(USER,JSON.stringify(x))}
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function statusText(x){return x.replaceAll("_"," ").replace(/\b\w/g,c=>c.toUpperCase())}
+function priorityClass(x){return "priority-"+x}
+
+function nav(){
+ if(!user){document.getElementById("nav").innerHTML="";return}
+ let menu=`<button onclick="dashboard()">Dashboard</button>`;
+ if(user.role==="student"){
+   menu+=`<button onclick="mine()">My Reports</button><button onclick="reportForm()">Report Problem</button>`;
+ }
+ if(user.role==="staff"){
+   menu+=`<button onclick="manage()">Assigned Reports</button>`;
+ }
+ if(user.role==="admin"){
+   menu+=`<button onclick="adminReports()">Manage Reports</button><button onclick="analytics()">Analytics</button><button onclick="userManagement()">User Management</button>`;
+ }
+ menu+=`<button onclick="about()">About</button><button onclick="confirmLogout()">Logout</button>`;
+ document.getElementById("nav").innerHTML=menu+`<div class="profile-chip"><div class="avatar">${esc((user.name||"U").split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase())}</div><span>${esc(user.name||"User")}</span></div>`;
+ renderNotifications();
+}
+
+function shell(html){document.getElementById("app").innerHTML=`<main class="container">${html}</main>`;nav()}
+
+function showToast(message,title="Success"){
+ const toast=document.getElementById("toast");
+ document.getElementById("toastTitle").textContent=title;
+ document.getElementById("toastMessage").textContent=message;
+ toast.classList.remove("hidden");
+ clearTimeout(window.resolveEdToastTimer);
+ window.resolveEdToastTimer=setTimeout(hideToast,4500);
+}
+function hideToast(){
+ document.getElementById("toast").classList.add("hidden");
+}
+function login(){
+ nav();
+ shell(`<div class="card auth"><h1>ResolveEd</h1><p>Problem Resolution Effectiveness System</p>
+ <div id="loginMessage" class="alert hidden"></div>
+ <form onsubmit="doLogin(event)">
+ <label>Username</label><input id="loginUser" required>
+ <label>Password</label><input id="loginPass" type="password" required>
+ <button>Login</button></form>
+ <p><a href="#" onclick="forgotPassword();return false">Forgot password?</a></p>
+ <p>New student? <a href="#" onclick="register();return false">Create account</a></p>
+ <div class="demo"><b>Demo accounts</b><br>Admin: admin / password<br>Staff: staff / password<br>Student: student / password<br><small>Location staff accounts use username + password (e.g. juan / password).</small></div></div>`);
+}
+
+function doLogin(e){
+ e.preventDefault();
+ const u=document.getElementById("loginUser").value.trim();
+ const p=document.getElementById("loginPass").value;
+
+ if(!u || !p){
+   showLoginMessage("Please enter your username and password.","error");
+   return;
+ }
+
+ let found=null;
+
+ // Built-in demo accounts
+ if(u.toLowerCase()==="admin" && p==="password"){
+   found={name:"System Administrator",username:"admin",role:"admin"};
+ }else if(u.toLowerCase()==="staff" && p==="password"){
+   found={name:"School Staff",username:"staff",role:"staff"};
+ }else if(u.toLowerCase()==="student" && p==="password"){
+   found={name:"Demo Student",username:"student",role:"student"};
+ }else{
+   // Registered accounts and location-based staff accounts.
+   const registeredUsers=JSON.parse(localStorage.getItem("resolveed_registered_users")||"[]");
+   found=registeredUsers.find(x=>x.username.toLowerCase()===u.toLowerCase() && x.password===p) || null;
+ }
+
+ if(!found){
+   showLoginMessage("Invalid username or password.","error");
+   return;
+ }
+
+ setUser({
+   name:found.name,
+   username:found.username,
+   role:found.role
+ });
+ dashboard();
+}
+
+function showLoginMessage(message,type="success"){
+ const box=document.getElementById("loginMessage");
+ if(!box)return;
+ box.textContent=message;
+ box.className="alert "+type;
+ box.classList.remove("hidden");
+}
+function forgotPassword(){
+ shell(`<div class="card auth">
+   <h1>Forgot Password</h1>
+   <p>Enter your registered username to reset your student password.</p>
+   <form onsubmit="resetPassword(event)">
+     <label>Username</label>
+     <input id="forgotUser" required>
+     <label>New Password</label>
+     <input id="newPassword" type="password" minlength="6" required>
+     <label>Confirm New Password</label>
+     <input id="confirmPassword" type="password" minlength="6" required>
+     <button>Reset Password</button>
+   </form>
+   <p><a href="#" onclick="login();return false">Back to login</a></p>
+ </div>`);
+}
+function resetPassword(e){
+ e.preventDefault();
+ const username=document.getElementById("forgotUser").value.trim();
+ const newPass=document.getElementById("newPassword").value;
+ const confirmPass=document.getElementById("confirmPassword").value;
+
+ if(newPass!==confirmPass){
+   showToast("Passwords do not match.","Password Reset");
+   return;
+ }
+
+ const users=JSON.parse(localStorage.getItem("resolveed_registered_users")||"[]");
+ const index=users.findIndex(x=>x.username.toLowerCase()===username.toLowerCase());
+
+ if(index===-1){
+   showToast("Username not found. Please check your username.","Password Reset");
+   return;
+ }
+
+ users[index].password=newPass;
+ localStorage.setItem("resolveed_registered_users",JSON.stringify(users));
+
+ login();
+ showLoginMessage("Password reset successful! You can now log in with your new password.","success");
+}
+function register(){
+ shell(`<div class="card auth"><h1>Create Student Account</h1>
+ <form onsubmit="doRegister(event)">
+ <label>Full Name</label><input id="regName" required>
+ <label>Username</label><input id="regUser" required>
+ <label>Password</label><input id="regPass" type="password" required>
+ <button>Register</button></form>
+ <p><a href="#" onclick="login();return false">Back to login</a></p></div>`);
+}
+function doRegister(e){
+ e.preventDefault();
+ const name=regName.value.trim(), username=regUser.value.trim(), password=regPass.value;
+ if(!name||!username||!password)return;
+ // Registration is stored locally, but the user is NOT logged in automatically.
+ const registeredUsers=JSON.parse(localStorage.getItem("resolveed_registered_users")||"[]");
+ if(registeredUsers.some(x=>x.username.toLowerCase()===username.toLowerCase())){
+   showLoginMessage("Username already exists. Please choose another username.","error");
+   return;
+ }
+ registeredUsers.push({name,username,password,role:"student"});
+ localStorage.setItem("resolveed_registered_users",JSON.stringify(registeredUsers));
+ user=null;
+ localStorage.removeItem(USER);
+ login();
+ showLoginMessage("Registration successful! Your account has been created. Please log in.","success");
+}
+let deleteReportId=null;
+function openDeleteModal(id){
+  if(user?.role!=="admin") return;
+  const r=reports.find(x=>x.id===id);
+  if(!r) return;
+  deleteReportId=id;
+  document.getElementById("deleteMessage").textContent=`Are you sure you want to delete "${r.title}"? This action cannot be undone.`;
+  document.getElementById("deleteModal").classList.remove("hidden");
+}
+function closeDeleteModal(){
+  deleteReportId=null;
+  document.getElementById("deleteModal").classList.add("hidden");
+}
+function confirmDelete(){
+  if(user?.role!=="admin" || deleteReportId===null) return;
+  const id=deleteReportId;
+  reports=reports.filter(r=>r.id!==id);
+  save();
+  closeDeleteModal();
+  adminReports();
+  showToast("The report has been deleted successfully.","Report Deleted");
+}
+
+function confirmLogout(){
+  document.getElementById("logoutModal").classList.remove("hidden");
+}
+function closeLogoutModal(){
+  document.getElementById("logoutModal").classList.add("hidden");
+}
+function doLogout(){
+  localStorage.removeItem(USER);
+  user = null;
+  closeLogoutModal();
+  nav();
+  login();
+}
+function logout(){
+  confirmLogout();
+}
+
+function dashboard(){
+ if(user.role==="admin"){adminDashboard();return}
+ if(user.role==="staff"){staffDashboard();return}
+
+ // Student dashboard: no system-wide/admin statistics.
+ let mine=reports.filter(r=>r.reportedBy===user.name);
+ let recent=mine.slice(0,3).map(r=>`
+   <tr>
+     <td>${esc(r.title)}</td>
+     <td>${esc(r.category)}</td>
+     <td>${statusText(r.status)}</td>
+     <td>${r.date}</td>
+     <td><a href="#" onclick="viewReport(${r.id});return false">View</a></td>
+   </tr>`).join("");
+
+ shell(`<section class="hero">
+   <div>
+     <h1>Welcome, ${esc(user.name)}</h1>
+     <p>Submit a concern and track the progress of your own reports.</p>
+   </div>
+   <button class="btn" onclick="reportForm()">+ Report a Problem</button>
+ </section>
+
+ <div class="card">
+   <h2>How to use ResolveEd</h2>
+   <div class="steps">
+     <div>1. Report your concern</div>
+     <div>2. Wait for staff review</div>
+     <div>3. Track the status</div>
+     <div>4. View the action taken</div>
+   </div>
+ </div>
+
+ <div class="card" style="margin-top:20px">
+   <div class="head">
+     <h2>My Recent Reports</h2>
+     <button onclick="mine()">View All My Reports</button>
+   </div>
+   <div class="table-wrap">
+     <table>
+       <tr><th>Problem</th><th>Category</th><th>Status</th><th>Date</th><th></th></tr>
+       ${recent || '<tr><td colspan="5">You have not submitted any reports yet.</td></tr>'}
+     </table>
+   </div>
+ </div>`);
+}
+
+function mine(){
+ if(user.role!=="student")return;
+ let mine=reports.filter(x=>x.reportedBy===user.name);
+ let rows=mine.map(r=>`<tr><td>${esc(r.title)}</td><td>${esc(r.category)}</td><td><span class="badge ${priorityClass(r.priority)}">${esc(r.priority)}</span></td><td>${statusText(r.status)}</td><td>${r.date}</td><td><a href="#" onclick="viewReport(${r.id});return false">View</a></td></tr>`).join("");
+ shell(`<div class="head"><h1>My Reports</h1><button onclick="reportForm()">+ New Report</button></div>
+ <div class="card table-wrap"><table><tr><th>Title</th><th>Category</th><th>Priority</th><th>Status</th><th>Date</th><th></th></tr>${rows||'<tr><td colspan="6">No reports yet.</td></tr>'}</table></div>`);
+}
+
+function manage(){
+ if(user.role==="admin"){adminReports();return}
+ if(user.role!=="staff")return;
+ let assigned=reports.filter(r=>r.assignedTo===user.name && r.status!=="resolved");
+ let rows=assigned.map(r=>`<tr><td>#${r.id}</td><td>${esc(r.title)}</td><td>${esc(r.reportedBy)}</td><td>${esc(r.category)}</td><td><span class="badge ${priorityClass(r.priority)}">${esc(r.priority)}</span></td><td>${statusText(r.status)}</td><td><a href="#" onclick="viewReport(${r.id});return false">Open</a></td></tr>`).join("");
+ shell(`<div class="head"><h1>Staff • Assigned Reports</h1><span class="badge">${assigned.length} assigned</span></div>
+ <div class="card"><p>Only reports assigned to <b>${esc(user.name)}</b> are shown here.</p>
+ <div class="table-wrap"><table><tr><th>ID</th><th>Problem</th><th>Reporter</th><th>Category</th><th>Priority</th><th>Status</th><th></th></tr>${rows||'<tr><td colspan="7">No reports are currently assigned to you.</td></tr>'}</table></div></div>`);
+}
+
+function reportForm(){
+ if(user.role!=="student"){showToast("Only students can submit problem reports.","Access Restricted");return}
+ document.getElementById("modalContent").innerHTML=`<h2>Report a Problem</h2>
+ <form onsubmit="submitReport(event)">
+ <label>Problem Title</label><input id="rTitle" required>
+ <label>Description</label><textarea id="rDesc" rows="5" required></textarea>
+ <div class="two"><div><label>Category</label><select id="rCat"><option>Facilities</option><option>IT</option><option>Cleanliness</option><option>Safety</option><option>Academic</option><option>Other</option></select></div>
+ <div><label>Priority</label><select id="rPri"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select></div></div>
+ <label>Location</label><input id="rLoc">
+ <label>Evidence photo (optional)</label><input id="rFile" type="file" accept="image/*">
+ <button>Submit Report</button></form>`;
+ document.getElementById("modal").classList.remove("hidden");
+}
+function closeModal(){document.getElementById("modal").classList.add("hidden")}
+function submitReport(e){
+ e.preventDefault();
+ let file=document.getElementById("rFile").files[0];
+ let add=r=>{
+  const report={
+    id:Date.now(),
+    title:rTitle.value,
+    description:rDesc.value,
+    category:rCat.value,
+    priority:rPri.value,
+    location:rLoc.value,
+    status:"pending",
+    reportedBy:user.name,
+    assignedTo:"",
+    actionTaken:"",
+    date:new Date().toISOString().slice(0,10),
+    evidence:r
+  };
+  reports.unshift(report);
+  save();
+
+  // Facebook-style notification for the administrator.
+  addNotification(
+    "admin",
+    "new_report",
+    "New problem report",
+    `${user.name} submitted "${report.title}".`,
+    report.id
+  );
+
+  closeModal();
+  mine();
+  showToast("Your problem report has been submitted successfully.","Report Submitted");
+ };
+ if(file){let rd=new FileReader();rd.onload=()=>add(rd.result);rd.readAsDataURL(file)}else add("");
+}
+
+function viewReport(id){
+ let r=reports.find(x=>x.id===id);if(!r)return;
+ if(user.role==="staff" && r.assignedTo!==user.name){showToast("This report is not assigned to you.","Access Restricted");return;}
+
+ let isStaff=user.role==="staff";
+ let isAdmin=user.role==="admin";
+ let availableStaff=staffForLocation(r.location);
+
+ document.getElementById("modalContent").innerHTML=`<h2>Report #${r.id}</h2><h3>${esc(r.title)}</h3>
+ <p>${esc(r.description).replaceAll("\n","<br>")}</p>
+ <div class="details">
+   <div><b>Category</b><br>${esc(r.category)}</div>
+   <div><b>Priority</b><br>${esc(r.priority)}</div>
+   <div><b>Status</b><br>${statusText(r.status)}</div>
+   <div><b>Location</b><br>${esc(r.location)}</div>
+ </div>
+ ${r.evidence?`<img class="evidence" src="${r.evidence}">`:""}
+ <hr>
+ <b>Assigned Staff:</b><p>${esc(r.assignedTo||"Unassigned")}</p>
+ <b>Action Taken:</b>
+ <p>${esc(r.actionTaken||"Not yet updated.")}</p>
+
+ ${isStaff?`
+ <div class="alert" style="background:#eef6ff;color:#1e40af">
+   <b>Staff controls:</b> You can change the report's status, priority, and action taken.
+ </div>
+ <form onsubmit="updateReport(event,${r.id})">
+   <label>Status</label>
+   <select id="uStatus">
+     ${["pending","under_review","in_progress","resolved","rejected"].map(x=>`<option ${r.status===x?"selected":""} value="${x}">${statusText(x)}</option>`).join("")}
+   </select>
+   <label>Priority</label>
+   <select id="uPriority">
+     ${["low","medium","high","critical"].map(x=>`<option ${r.priority===x?"selected":""}>${x}</option>`).join("")}
+   </select>
+   <label>Action Taken</label>
+   <textarea id="uAction" rows="4">${esc(r.actionTaken)}</textarea>
+   <button>Save Staff Update</button>
+ </form>`:""}
+
+ ${isAdmin?`
+ <div class="alert" style="background:#fff7ed;color:#9a3412">
+   <b>Admin controls:</b> Assign this report to the staff responsible for its location.
+   <br><small>Suggested staff are filtered using the report location.</small>
+ </div>
+ <form onsubmit="updateReport(event,${r.id})">
+   <label>Location</label>
+   <input value="${esc(r.location)}" disabled>
+   <label>Assign Responsible Staff</label>
+   <select id="uAssigned">
+     <option value="Unassigned" ${!r.assignedTo?"selected":""}>Unassigned</option>
+     ${availableStaff.map(s=>`<option value="${esc(s.name)}" ${r.assignedTo===s.name?"selected":""}>${esc(staffDisplay(s))}</option>`).join("")}
+   </select>
+   ${availableStaff.length?`<small style="color:#64748b">Only staff responsible for this location are shown.</small>`:`<small style="color:#b45309">No exact location match found. Add the location to the staff directory if needed.</small>`}
+   <button>Assign Staff</button>
+ </form>`:""}
+
+ <div class="card" style="margin-top:18px;background:#f8fafc">
+   <b>Resolution flow</b>
+   <p style="margin-bottom:0;color:#64748b">Student report → Admin assigns responsible staff → Staff updates priority/status/action → Student receives resolution notification.</p>
+ </div>`;
+
+ document.getElementById("modal").classList.remove("hidden");
+}
+function updateReport(e,id){
+ e.preventDefault();
+ let r=reports.find(x=>x.id===id);
+ if(!r)return;
+
+ const oldAssigned=r.assignedTo||"";
+ const oldStatus=r.status;
+ const oldPriority=r.priority;
+ const oldAction=r.actionTaken||"";
+
+ if(user.role==="staff"){
+   r.status=uStatus.value;
+   r.priority=uPriority.value;
+   r.actionTaken=uAction.value;
+   r.assignedTo=oldAssigned;
+ }else if(user.role==="admin"){
+   const selected=uAssigned.value==="Unassigned"?"":uAssigned.value;
+   if(selected){
+     const allowed=staffForLocation(r.location).some(s=>s.name===selected);
+     if(!allowed){
+       showToast("That staff member is not responsible for this location.","Assignment Restricted");
+       return;
+     }
+   }
+   r.assignedTo=selected;
+   r.status=oldStatus;
+   r.priority=oldPriority;
+   r.actionTaken=oldAction;
+ }else{
+   showToast("You do not have permission to update this report.","Access Restricted");
+   return;
+ }
+
+ save();
+
+ if(user.role==="admin" && r.assignedTo && r.assignedTo!==oldAssigned){
+   const assignedStaff=staffByName(r.assignedTo);
+   if(assignedStaff){
+     addNotification(
+       assignedStaff.username,
+       "assigned",
+       "New report assigned to you",
+       `Admin assigned "${r.title}" to you for ${r.location}.`,
+       r.id
+     );
+   }
+ }
+
+ if(user.role==="staff" && (r.status!==oldStatus || r.priority!==oldPriority || r.actionTaken!==oldAction)){
+   const registeredUsers=JSON.parse(localStorage.getItem("resolveed_registered_users")||"[]");
+   const student=registeredUsers.find(x=>x.name===r.reportedBy);
+   const studentAccount=student ? student.username : (r.reportedBy==="Demo Student" ? "student" : "");
+
+   if(r.status==="resolved"){
+     if(studentAccount){
+       addNotification(
+         studentAccount,
+         "resolved",
+         "Your report has been resolved",
+         `Your report "${r.title}" has been marked as resolved by ${user.name}.`,
+         r.id
+       );
+     }
+     addNotification(
+       "admin",
+       "resolved",
+       "Report resolved",
+       `${user.name} resolved "${r.title}".`,
+       r.id
+     );
+   }else{
+     addNotification(
+       "admin",
+       "updated",
+       "Report updated",
+       `${user.name} updated "${r.title}" — status: ${statusText(r.status)}.`,
+       r.id
+     );
+   }
+ }
+
+ closeModal();
+ user.role==="admin"?adminReports():manage();
+ showToast("The report has been updated successfully.","Report Updated");
+}
+function about(){shell(`<div class="card"><h1>About ResolveEd</h1><p>ResolveEd is a school-based Problem Resolution Effectiveness System. It follows a problem from reporting, prioritization and action through resolution.</p><h3>Prototype features</h3><ul><li>Student reporting</li><li>Problem status tracking</li><li>Priority management</li><li>Staff assignment</li><li>Action taken records</li><li>Dashboard statistics</li></ul><p><b>Note:</b> This HTML version stores demo data in your browser using localStorage. It does not require PHP, MySQL, XAMPP, or Laragon.</p></div>`)}
+
+
+function staffDashboard(){
+ let assigned=reports.filter(r=>r.assignedTo===user.name && r.status!=="resolved");
+ let inProgress=reports.filter(r=>r.status==="in_progress").length;
+ let resolved=reports.filter(r=>r.status==="resolved").length;
+ shell(`<section class="hero"><div><h1>Staff Workspace</h1><p>Review, assign, update and resolve school problems.</p></div><button class="btn" onclick="manage()">Open Assigned Reports</button></section>
+ <div class="grid"><div class="card stat"><strong>${assigned.length}</strong><span>Needs Attention</span></div>
+ <div class="card stat"><strong>${inProgress}</strong><span>In Progress</span></div>
+ <div class="card stat"><strong>${resolved}</strong><span>Resolved</span></div>
+ <div class="card stat"><strong>${reports.filter(r=>r.priority==="critical").length}</strong><span>Critical</span></div></div>
+ <div class="card"><h2>Staff responsibilities</h2><div class="steps"><div>Review report</div><div>Set priority</div><div>Take action</div><div>Update resolution</div></div></div>`);
+}
+function adminDashboard(){
+ let total=reports.length,res=reports.filter(r=>r.status==="resolved").length;
+ shell(`<section class="hero"><div><h1>Administrator Dashboard</h1><p>Monitor the entire problem-resolution system and its effectiveness.</p></div><button class="btn" onclick="adminReports()">View All Reports</button></section>
+ <div class="grid"><div class="card stat"><strong>${total}</strong><span>Total Reports</span></div>
+ <div class="card stat"><strong>${res}</strong><span>Resolved</span></div>
+ <div class="card stat"><strong>${total?Math.round(res/total*100):0}%</strong><span>Resolution Rate</span></div>
+ <div class="card stat"><strong>${reports.filter(r=>r.priority==="critical").length}</strong><span>Critical Cases</span></div></div>
+ <div class="card"><h2>Administrator Controls</h2><div class="steps"><div>Monitor all reports</div><div>View analytics</div><div>Review users</div><div>Evaluate effectiveness</div></div></div>`);
+}
+function adminReports(){
+ let rows=reports.map(r=>`<tr><td>#${r.id}</td><td>${esc(r.title)}</td><td>${esc(r.reportedBy)}</td><td>${esc(r.category)}</td><td>${esc(r.priority)}</td><td>${statusText(r.status)}</td><td>${esc(r.assignedTo||"Unassigned")}</td><td><a href="#" onclick="viewReport(${r.id});return false">View</a> <button class="delete-btn" onclick="openDeleteModal(${r.id})">Delete</button></td></tr>`).join("");
+ shell(`<div class="head"><h1>Administrator • All Reports</h1><span class="badge">Full Access</span></div>
+ <div class="card"><p>Administrator view: monitor all reports and assign each report to the staff responsible for its location. Status, priority, and action taken are controlled by staff.</p>
+ <div class="table-wrap"><table><tr><th>ID</th><th>Problem</th><th>Reporter</th><th>Category</th><th>Priority</th><th>Status</th><th>Assigned</th><th>Actions</th></tr>${rows||'<tr><td colspan="8">No reports.</td></tr>'}</table></div></div>`);
+}
+function analytics(){
+ let total=reports.length,res=reports.filter(r=>r.status==="resolved").length,open=total-res,critical=reports.filter(r=>r.priority==="critical").length;
+ let categories={};reports.forEach(r=>categories[r.category]=(categories[r.category]||0)+1);
+ let catRows=Object.entries(categories).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("");
+ shell(`<div class="head"><h1>Administrator • Analytics</h1><span class="badge">System Overview</span></div>
+ <div class="grid"><div class="card stat"><strong>${total}</strong><span>Total Reports</span></div><div class="card stat"><strong>${res}</strong><span>Resolved</span></div><div class="card stat"><strong>${open}</strong><span>Open / Unresolved</span></div><div class="card stat"><strong>${critical}</strong><span>Critical</span></div></div>
+ <div class="card"><h2>Reports by Category</h2><div class="table-wrap"><table><tr><th>Category</th><th>Reports</th></tr>${catRows||'<tr><td colspan="2">No data.</td></tr>'}</table></div></div>`);
+}
+function userManagement(){
+ let users=[{name:"System Administrator",username:"admin",role:"Administrator"},{name:"School Staff",username:"staff",role:"Staff"},{name:"Demo Student",username:"student",role:"Student"}];
+ let registered=JSON.parse(localStorage.getItem("resolveed_registered_users")||"[]");
+ registered.forEach(u=>{if(!users.some(x=>x.username.toLowerCase()===u.username.toLowerCase())) users.push({name:u.name,username:u.username,role:"Student"})});
+ let rows=users.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.username)}</td><td>${esc(u.role)}</td></tr>`).join("");
+ shell(`<div class="head"><h1>Administrator • User Management</h1><span class="badge">Admin Only</span></div>
+ <div class="card"><p>Administrator can review the users and roles in this prototype.</p><table><tr><th>Name</th><th>Username</th><th>Role</th></tr>${rows}</table></div>`);
+}
+
+// Always start at the Login screen whenever the HTML file is opened.
+user = null;
+localStorage.removeItem(USER);
+nav();
+login();
+</script>
+</body>
+</html>

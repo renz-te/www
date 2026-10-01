@@ -1,0 +1,7 @@
+<?php if(session_status()===PHP_SESSION_NONE)session_start(); $u=$_SESSION['user']??null; $success=flash('success'); $error=flash('error'); ?>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ResolveEd</title><link rel="stylesheet" href="css/style.css"></head><body>
+<header><div class="logo">Resolve<span>Ed</span></div><?php if($u): ?><nav><a href="index.php?page=dashboard">Dashboard</a><?php if($u['role']==='student'): ?><a href="index.php?page=mine">My Reports</a><a href="index.php?page=report">Report Problem</a><?php elseif($u['role']==='staff'): ?><a href="index.php?page=assigned">Assigned Reports</a><?php else: ?><a href="index.php?page=manage">Manage Reports</a><a href="index.php?page=analytics">Analytics</a><a href="index.php?page=users">User Management</a><?php endif; ?><a href="index.php?page=about">About</a><a href="#" onclick="openLogoutModal(event)">Logout</a></nav><?php endif; ?></header>
+<main class="container">
+<?php if($success): ?><div class="flash success"><b>Success</b><br><?=e($success)?></div><?php endif; ?>
+<?php if($error): ?><div class="flash error"><b>Error</b><br><?=e($error)?></div><?php endif; ?>
+<div id="logoutModal" class="logout-modal hidden"><div class="logout-box"><h2>Log out?</h2><p>Are you sure you want to log out of your ResolveEd account?</p><div class="logout-actions"><button class="cancel" onclick="closeLogoutModal()">Cancel</button><a class="danger" href="index.php?page=logout">Log out</a></div></div></div>

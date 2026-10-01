@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory & Finance Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Inventory & Finance Dashboard</h1>
+      <p>Track products, stock levels, sales, purchases, expenses, and profit in one page.</p>
+    </header>
+
+    <div class="grid dashboard-grid">
+      <section class="card" id="inventory-card">
+        <h2>Inventory Management</h2>
+        <div class="form-row">
+          <div>
+            <label for="itemName">Item name</label>
+            <input id="itemName" type="text" placeholder="e.g. Printer paper" />
+          </div>
+          <div>
+            <label for="itemCategory">Category</label>
+            <select id="itemCategory">
+              <option value="Office">Office</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Food">Food</option>
+              <option value="Supplies">Supplies</option>
+            </select>
+          </div>
+          <div>
+            <label for="itemQuantity">Quantity</label>
+            <input id="itemQuantity" type="number" min="1" value="1" />
+          </div>
+          <div>
+            <label for="itemPrice">Unit price</label>
+            <input id="itemPrice" type="number" min="0" step="0.01" value="0.00" />
+          </div>
+        </div>
+        <button type="button" onclick="addInventoryItem()">Add inventory item</button>
+
+        <div class="summary section-spacing">
+          <div class="summary-card">
+            <strong>Total items</strong>
+            <span id="inventoryCount">0</span>
+          </div>
+          <div class="summary-card">
+            <strong>Inventory value</strong>
+            <span id="inventoryValue">$0.00</span>
+          </div>
+        </div>
+
+        <table id="inventoryTable">
+          <thead>
+            <tr><th>Name</th><th>Category</th><th>Quantity</th><th>Price</th><th>Value</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card" id="finance-card">
+        <h2>Finance Tracker</h2>
+        <div class="form-row">
+          <div>
+            <label for="transactionType">Type</label>
+            <select id="transactionType">
+              <option value="sale">Sale</option>
+              <option value="purchase">Purchase</option>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </div>
+          <div>
+            <label for="transactionAmount">Amount</label>
+            <input id="transactionAmount" type="number" min="0.01" step="0.01" value="0.00" />
+          </div>
+          <div>
+            <label for="transactionCategory">Category</label>
+            <input id="transactionCategory" type="text" placeholder="e.g. Supplies" />
+          </div>
+          <div>
+            <label for="transactionNote">Note</label>
+            <input id="transactionNote" type="text" placeholder="Short description" />
+          </div>
+        </div>
+        <button type="button" onclick="addFinanceTransaction()">Add transaction</button>
+
+        <div class="summary section-spacing">
+          <div class="summary-card">
+            <strong>Total revenue</strong>
+            <span id="totalRevenue">$0.00</span>
+          </div>
+          <div class="summary-card">
+            <strong>Total expenses</strong>
+            <span id="totalExpenses">$0.00</span>
+          </div>
+          <div class="summary-card">
+            <strong>Profit / Loss</strong>
+            <span id="netProfit">$0.00</span>
+          </div>
+          <div class="summary-card">
+            <strong>Transactions</strong>
+            <span id="transactionCount">0</span>
+          </div>
+        </div>
+
+        <table id="financeTable">
+          <thead>
+            <tr><th>Type</th><th>Amount</th><th>Category</th><th>Description</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
